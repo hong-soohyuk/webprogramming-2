@@ -22,12 +22,18 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
+    // DB Connection
+    private static final String db_url = "jdbc:oracle:thin:@localhost:1521:orcl";
+    private static final String db_user = "c##USER_SERVICE_DB";
+    private static final String db_password = "1234";
+
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
     private UserRepository repository;
 
-    public UserServiceImpl(UserRepository repository) {
-        this.repository = repository;
+    public UserServiceImpl() {
+        // connect repository to DB
+        this.repository = new UserRepository();
+        this.repository.connect(db_url, db_user, db_password);
     }
 
 
@@ -36,7 +42,8 @@ public class UserServiceImpl implements UserService {
         String email = userDto.getEmail();
         String pwd = userDto.getPwd();
         String name = userDto.getName();
-        return repository.insertUser(email, pwd, name, 0) ?
+        int defaultReportedCount = 0;
+        return repository.insertUser(email, pwd, name, defaultReportedCount) ?
                 "User is created successfully" : "There is a user registered with this email";
     }
 
@@ -47,9 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @GetMapping
     public UserEntity getUser(String email, String pwd) {
-        UserEntity userEntity = repository.getUser(email);
-        if (userEntity != null && pwd.equals(userEntity.getPwd())) return userEntity;
-        else return new UserEntity();
+        return repository.getUser(email);
     }
 
     public UserEntity getUser(String email) {
