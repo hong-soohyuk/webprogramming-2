@@ -16,6 +16,8 @@ public class OrderEntity implements Serializable {
 	@GeneratedValue
 	private Long id;
 
+	@Column(nullable = false)
+	private String	productId;
 	@Column(nullable = false, length = 120)
 	private String	productName;
 	@Column(nullable = false)
