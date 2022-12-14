@@ -11,6 +11,7 @@ import com.example.orderservice.vo.ResponseProduct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/order-service")
 public class OrderController {
-    private Environment             environment;
-    private OrderService            orderService;
-    private KafkaProducer           kafkaProducer;
-    private ProductServiceClient    productServiceClient;
+    private Environment                 environment;
+    private OrderService                orderService;
+    private KafkaProducer               kafkaProducer;
 
     public OrderController(Environment environment, OrderService orderService, KafkaProducer kafkaProducer) {
         this.environment = environment;
@@ -40,8 +40,6 @@ public class OrderController {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         OrderDto        orderDto = modelMapper.map(orderDetails, OrderDto.class);
         orderDto.setUserEmail(userEmail);
-        ResponseProduct product = productServiceClient.getProduct(orderDetails.getProductId());
-        orderDto.setProductName(product.getProductName());
         OrderDto        createDto = orderService.createOrder(orderDto);
         ResponseOrder   returnValue = modelMapper.map(createDto, ResponseOrder.class);
         kafkaProducer.send("order-created-topic", orderDto);
