@@ -1,7 +1,7 @@
-package com.example.shipmentservice.service;
+package com.example.shipmentservice2.service;
 
-import com.example.shipmentservice.dto.ShipmentDto;
-import com.example.shipmentservice.jpa.ShipmentEntity;
+import com.example.shipmentservice2.dto.ShipmentDto;
+import com.example.shipmentservice2.jpa.ShipmentEntity;
 
 public interface ShipmentService {
     ShipmentDto createShipment(ShipmentDto shipmentDetails);
