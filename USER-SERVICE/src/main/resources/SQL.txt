@@ -1,0 +1,14 @@
+Create Table User_Table(
+Email Varchar(50) Primary Key Not Null,
+Pwd Varchar(50) Not Null,
+User_Name Varchar(50) Not Null,
+reported_count int default 0 not null
+);
+
+Create Table Report (
+  reporter varchar(50) not null,
+  Reportee Varchar(50) Not Null,
+  Primary Key(Reporter, Reportee),
+  Foreign Key (Reporter) References User_Table(Email),
+   foreign key (reportee) references user_table(email)
+);
