@@ -4,6 +4,7 @@ import com.example.orderservice.dto.OrderDto;
 import com.example.orderservice.jpa.OrderEntity;
 import com.example.orderservice.jpa.OrderRepository;
 import com.example.orderservice.jpa.STATUS;
+import com.example.orderservice.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,8 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -38,6 +41,19 @@ public class OrderServiceImpl implements OrderService{
 		repository.save(orderEntity);
 		OrderDto		returnValue = modelMapper.map(orderEntity, OrderDto.class);
 		return (returnValue);
+	}
+
+	@Override
+	public OrderDto cancelOrder(String orderId) {
+		OrderEntity	orderEntity = repository.findByOrderId(orderId);
+		if (orderEntity.getStatus().equals(STATUS.READY))
+		{
+			orderEntity.setStatus(STATUS.CANCELED);
+			repository.save(orderEntity);
+			return (new ModelMapper().map(orderEntity, OrderDto.class));
+		}
+		else
+			return (null);
 	}
 
 	@Override

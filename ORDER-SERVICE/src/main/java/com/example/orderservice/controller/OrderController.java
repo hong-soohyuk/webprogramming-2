@@ -54,10 +54,11 @@ public class OrderController {
     @PutMapping("{userEmail}/order/{orderId}/cancel")
     public ResponseEntity<ResponseOrder>    cancelOrder(@PathVariable("userEmail") String userEmail,
                                                         @PathVariable("orderId") String orderId) {
-        OrderDto            orderDto = orderService.getOrderByOrderId(orderId);
-        orderDto.setStatus(STATUS.CANCELED.name());
+        OrderDto    orderDto = orderService.cancelOrder(orderId);
         kafkaProducer.send("order-updated", orderDto);
-        ResponseOrder    result = new ModelMapper().map(orderDto, ResponseOrder.class);
-        return (ResponseEntity.status(HttpStatus.OK).body(result));
+        if (orderDto != null)
+            return (ResponseEntity.status(HttpStatus.OK).body(new ModelMapper().map(orderDto, ResponseOrder.class)));
+        else
+            return (ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ModelMapper().map(null, ResponseOrder.class)));
     }
 }
