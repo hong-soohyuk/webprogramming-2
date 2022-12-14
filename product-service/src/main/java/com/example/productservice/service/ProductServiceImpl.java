@@ -3,7 +3,7 @@ package com.example.productservice.service;
 import com.example.productservice.dto.PatchProductRequest;
 import com.example.productservice.dto.PostProductRequest;
 import com.example.productservice.jpa.ProductEntity;
-import com.example.productservice.jpa.ProductEnum;
+import com.example.productservice.jpa.Status;
 import com.example.productservice.jpa.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,6 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Calendar;
-import java.util.Date;
 
 @Service
 @Slf4j
@@ -35,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         ProductEntity orderEntity = modelMapper.map(request, ProductEntity.class);
-        orderEntity.setStatus(ProductEnum.Sold);
+        orderEntity.setStatus(Status.Selling);
         orderEntity.setUserEmail(userEmail);
 
         catalogRepository.save(orderEntity);
@@ -47,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
         ProductEntity productEntity = catalogRepository.findByProductId(request.getProductId());
         productEntity.setProductName(request.getProductName());
-        productEntity.setUnitPrice(request.getUnitPrice());
+        productEntity.setPrice(request.getPrice());
 
     }
 

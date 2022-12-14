@@ -6,5 +6,5 @@ import lombok.Data;
 public class PostProductRequest {
     private String productId;
     private String productName;
-    private Integer unitPrice;
+    private Integer price;
 }

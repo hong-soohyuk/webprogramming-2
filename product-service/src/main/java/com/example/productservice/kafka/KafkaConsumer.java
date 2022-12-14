@@ -1,7 +1,7 @@
 package com.example.productservice.kafka;
 
 import com.example.productservice.jpa.ProductEntity;
-import com.example.productservice.jpa.ProductEnum;
+import com.example.productservice.jpa.Status;
 import com.example.productservice.jpa.ProductRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,7 +39,7 @@ public class KafkaConsumer {
         }
 
         ProductEntity entity = repository.findByProductId((String) map.get("productId"));
-        entity.setStatus(ProductEnum.SoldOut);
+        entity.setStatus(Status.SoldOut);
 
         repository.save(entity);
     }
@@ -60,7 +60,7 @@ public class KafkaConsumer {
         if(reportedCount >= 5) {
             List<ProductEntity> arr = repository.findByUserEmail((String) map.get("name"));
             for (ProductEntity productEntity : arr) {
-                productEntity.setStatus(ProductEnum.StopSell);
+                productEntity.setStatus(Status.Banned);
             }
         }
 
