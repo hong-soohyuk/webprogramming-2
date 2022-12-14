@@ -11,7 +11,7 @@ public class ResponseOrder {
 
     private String  productId;
     private String  productName;
-    private Integer unitPrice;
+    private Integer price;
     private String  address;
     private String  orderId;
     private Date    createAt;

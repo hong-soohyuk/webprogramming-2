@@ -25,7 +25,7 @@ public class OrderEntity implements Serializable {
 	@Column(nullable = false)
 	private String	address;
 	@Column(nullable = false)
-	private String	userId;
+	private String	userEmail;
 	@Column(nullable = false, unique = true)
 	private String	orderId;
 	@Column(nullable = false, updatable = false, insertable = false)

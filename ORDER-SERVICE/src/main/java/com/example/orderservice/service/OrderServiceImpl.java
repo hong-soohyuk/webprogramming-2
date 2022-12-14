@@ -34,5 +34,5 @@ public class OrderServiceImpl implements OrderService{
 	public OrderDto	getOrderByOrderId(String orderId) {return (new ModelMapper().map((OrderEntity)repository.findByOrderId(orderId), OrderDto.class));}
 
 	@Override
-	public Iterable<OrderEntity>	getOrderByUserId(String userId) {return (repository.findByUserId(userId));}
+	public Iterable<OrderEntity>	getOrderByUserEmail(String userEmail) {return (repository.findByUserEmail(userEmail));}
 }

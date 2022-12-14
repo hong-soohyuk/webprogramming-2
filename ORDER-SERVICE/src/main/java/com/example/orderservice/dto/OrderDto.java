@@ -5,10 +5,10 @@ import java.io.Serializable;
 
 @Data
 public class OrderDto implements Serializable {
-	private String	productId;//
+	private String	productId;
 	private String	productName;
-	private	Integer	unitPrice;
+	private	Integer	price;
 	private String	address;
-	private String	userId;
+	private String	userEmail;
 	private String	orderId;
 }

@@ -6,5 +6,5 @@ import com.example.orderservice.jpa.OrderEntity;
 public interface OrderService {
     OrderDto                createOrder(OrderDto orderDetails);
     OrderDto                getOrderByOrderId(String orderId);
-    Iterable<OrderEntity>   getOrderByUserId(String userId);
+    Iterable<OrderEntity>   getOrderByUserEmail(String userEmail);
 }
