@@ -12,6 +12,7 @@ public class UserDto {
 
     private String email;
     private String pwd;
+    private String address;
     private String name;
     private int reportedCount;
 

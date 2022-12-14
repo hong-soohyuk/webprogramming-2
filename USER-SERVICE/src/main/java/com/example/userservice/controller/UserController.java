@@ -111,7 +111,9 @@ public class UserController {
         if (message.equals("You have reported this user successfully")) {
             mapper = new ModelMapper();
             mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-            kafkaProducer.publish("UserReported", mapper.map(userService.getUser(reportDto.getReportee()), UserDto.class));
+            UserDto dto = mapper.map(userService.getUser(reportDto.getReportee()), UserDto.class);
+            dto.setOrders(new ArrayList<>());
+            kafkaProducer.publish("UserReported", dto);
         }
         return message;
     }

@@ -28,12 +28,12 @@ public class UserRepository {
         }
     }
 
-    public boolean insertUser(String email, String pwd, String name, int reportedCount) {
+    public boolean insertUser(String email, String pwd, String name, String address,  int reportedCount) {
         try {
             if (!executeQuery("SELECT * FROM user_table WHERE email=\'" + email + "\'").isAfterLast())
                 return false;
             ResultSet resultSet = executeQuery("INSERT INTO user_table " +
-                    "VALUES(\'" + email + "\',\'" + pwd + "\',\'" + name + "\'," + reportedCount + ")");
+                    "VALUES(\'" + email + "\',\'" + pwd + "\',\'" + address + "\', \'" + name + "\'," + reportedCount + ")");
             return true;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -48,8 +48,9 @@ public class UserRepository {
                 String email = resulstSet.getString("email");
                 String pwd = resulstSet.getString("pwd");
                 String name = resulstSet.getString("user_name");
+                String address = resulstSet.getString("address");
                 int reportedCount = resulstSet.getInt("reported_count");
-                userList.add(new UserEntity(email, pwd, name, reportedCount));
+                userList.add(new UserEntity(email, pwd, name, address, reportedCount));
                 resulstSet.next();
             }
             return userList;
@@ -64,8 +65,9 @@ public class UserRepository {
             if (!resulstSet.isAfterLast()) {
                 String pwd = resulstSet.getString("pwd");
                 String name = resulstSet.getString("user_name");
+                String address = resulstSet.getString("address");
                 int reportedCount = resulstSet.getInt("reported_count");
-                return new UserEntity(email, pwd, name, reportedCount);
+                return new UserEntity(email, pwd, name, address, reportedCount);
             } else return null;
         } catch (SQLException e) {
             throw new RuntimeException(e);

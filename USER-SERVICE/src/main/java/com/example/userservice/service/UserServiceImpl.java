@@ -34,8 +34,9 @@ public class UserServiceImpl implements UserService {
         String email = userDto.getEmail();
         String pwd = userDto.getPwd();
         String name = userDto.getName();
+        String address = userDto.getAddress();
         int defaultReportedCount = 0;
-        return repository.insertUser(email, pwd, name, defaultReportedCount) ?
+        return repository.insertUser(email, pwd, name, address,defaultReportedCount) ?
                 "User is created successfully" : "There is a user registered with this email";
     }
 

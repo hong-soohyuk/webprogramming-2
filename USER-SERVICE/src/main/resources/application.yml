@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 9201
 
 spring:
   application:
@@ -26,6 +26,6 @@ management:
     web:
       exposure:
         include: refresh, health, beans, busrefresh, info, prometheus, metrics
-    base-path: /application
+      base-path: "/user-service/actuator"
 
 

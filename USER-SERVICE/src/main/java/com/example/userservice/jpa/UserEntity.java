@@ -21,16 +21,19 @@ public class UserEntity {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
+    private String address;
+    @Column(nullable = false)
     private int reportedCount;
 
-    public UserEntity(String email, String pwd, String name, int reportedCount) {
+    public UserEntity(String email, String pwd, String name,String address, int reportedCount) {
         this.email = email;
         this.pwd = pwd;
         this.name = name;
+        this.address = address;
         this.reportedCount = reportedCount;
     }
 
     public UserEntity() {
-        this(null, null, null, -1);
+        this(null, null, null,null, -1);
     }
 }
