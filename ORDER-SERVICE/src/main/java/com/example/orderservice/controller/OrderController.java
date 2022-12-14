@@ -2,17 +2,15 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderDto;
 import com.example.orderservice.jpa.OrderEntity;
+import com.example.orderservice.jpa.STATUS;
 import com.example.orderservice.service.KafkaProducer;
 import com.example.orderservice.service.OrderService;
-import com.example.orderservice.service.ProductServiceClient;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
-import com.example.orderservice.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +41,7 @@ public class OrderController {
     }
 
     @GetMapping(value = "/{userEmail}/order")
-    public ResponseEntity<List<ResponseOrder>> getOrder(@PathVariable("userEmail") String userEmail) {
+    public ResponseEntity<List<ResponseOrder>>  getOrder(@PathVariable("userEmail") String userEmail) {
         log.info("Before retrieve order data");
         Iterable<OrderEntity>   orderList = orderService.getOrderByUserEmail(userEmail);
         List<ResponseOrder>     result = new ArrayList<>();
@@ -53,5 +51,13 @@ public class OrderController {
         log.info("Add retrieved order data");
         return (ResponseEntity.status(HttpStatus.OK).body(result));
     }
-
+    @PutMapping("{userEmail}/order/{orderId}/cancel")
+    public ResponseEntity<ResponseOrder>    cancelOrder(@PathVariable("userEmail") String userEmail,
+                                                        @PathVariable("orderId") String orderId) {
+        OrderDto            orderDto = orderService.getOrderByOrderId(orderId);
+        orderDto.setStatus(STATUS.CANCELED.name());
+        kafkaProducer.send("order-updated", orderDto);
+        ResponseOrder    result = new ModelMapper().map(orderDto, ResponseOrder.class);
+        return (ResponseEntity.status(HttpStatus.OK).body(result));
+    }
 }
