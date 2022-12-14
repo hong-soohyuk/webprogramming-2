@@ -22,19 +22,20 @@ public class KafkaConsumer {
     ProductRepository repository;
 
     @Autowired
-    public KafkaConsumer(ProductRepository repository){
+    public KafkaConsumer(ProductRepository repository) {
         this.repository = repository;
     }
 
     @KafkaListener(topics = "order-product")
     @Transactional
-    public void processMessage(String kafkaMessage){
+    public void processMessage(String kafkaMessage) {
 
-                Map<Object, Object> map = new HashMap<>();
+        Map<Object, Object> map = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
-        try{
-            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>(){});
-        } catch (JsonProcessingException e){
+        try {
+            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
+            });
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
@@ -46,18 +47,19 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "UserReported")
     @Transactional
-    public void UserReported(String kafkaMessage){
+    public void UserReported(String kafkaMessage) {
 
         Map<Object, Object> map = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
-        try{
-            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>(){});
-        } catch (JsonProcessingException e){
+        try {
+            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
+            });
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         Integer reportedCount = (Integer) map.get("reportedCount");
-        if(reportedCount >= 5) {
+        if (reportedCount >= 5) {
             List<ProductEntity> arr = repository.findByUserEmail((String) map.get("name"));
             for (ProductEntity productEntity : arr) {
                 productEntity.setStatus(Status.Banned);

@@ -16,7 +16,7 @@ spring:
     show-sql: true
     generate-ddl: true
     defer-datasource-initialization: true
-#  datasource:
+  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://localhost:3306/jpashop?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
 #    username: sa
