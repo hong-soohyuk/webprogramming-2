@@ -39,7 +39,7 @@ public class OrderController {
         orderDto.setUserId(userId);
         OrderDto        createDto = orderService.createOrder(orderDto);
         ResponseOrder   returnValue = modelMapper.map(createDto, ResponseOrder.class);
-        kafkaProducer.send("order-topic", orderDto);
+        kafkaProducer.send("order-created-topic", orderDto);
         return (ResponseEntity.status(HttpStatus.CREATED).body(returnValue));
     }
 
