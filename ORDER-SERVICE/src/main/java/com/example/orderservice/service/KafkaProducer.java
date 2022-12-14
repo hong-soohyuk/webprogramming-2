@@ -21,12 +21,8 @@ public class KafkaProducer {
     public OrderDto send(String kafkaTopic, OrderDto orderDto) {
         ObjectMapper mapper = new ObjectMapper();
         String jsonInString = "";
-        try {
-            jsonInString = mapper.writeValueAsString(orderDto);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
+        try     {jsonInString = mapper.writeValueAsString(orderDto);}
+        catch   (JsonProcessingException e) {throw new RuntimeException(e);}
         kafkaTemplate.send(kafkaTopic, jsonInString);
         log.info("Kafka Producer send data from the Order Microservice " + orderDto);
         return orderDto;

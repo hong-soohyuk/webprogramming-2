@@ -8,6 +8,7 @@ import com.example.orderservice.service.ProductServiceClient;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
 import com.example.orderservice.vo.ResponseProduct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -22,17 +23,12 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/order-service")
 public class OrderController {
-    private Environment                 environment;
-    private OrderService                orderService;
-    private KafkaProducer               kafkaProducer;
-
-    public OrderController(Environment environment, OrderService orderService, KafkaProducer kafkaProducer) {
-        this.environment = environment;
-        this.orderService = orderService;
-        this.kafkaProducer = kafkaProducer;
-    }
+    private final Environment   environment;
+    private final OrderService  orderService;
+    private final KafkaProducer kafkaProducer;
 
     @PostMapping(value = "/{userEmail}/order")
     public ResponseEntity<ResponseOrder>    createOrder(@PathVariable String userEmail, @RequestBody RequestOrder orderDetails){
