@@ -12,6 +12,7 @@ public class ResponseOrder {
     private String  productId;
     private String  productName;
     private Integer price;
+    private String  status;
     private String  endAddress;
     private String  orderId;
     private Date    createAt;

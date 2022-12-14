@@ -23,6 +23,8 @@ public class OrderEntity implements Serializable {
 	@Column(nullable = false)
 	private Integer	price;
 	@Column(nullable = false)
+	private STATUS status;
+	@Column(nullable = false)
 	private String	endAddress;
 	@Column(nullable = false)
 	private String	userEmail;

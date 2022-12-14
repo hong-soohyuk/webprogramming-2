@@ -3,7 +3,7 @@ package com.example.orderservice.service;
 import com.example.orderservice.dto.OrderDto;
 import com.example.orderservice.jpa.OrderEntity;
 import com.example.orderservice.jpa.OrderRepository;
-import com.example.orderservice.vo.ResponseProduct;
+import com.example.orderservice.jpa.STATUS;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -19,8 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderServiceImpl implements OrderService{
-	@Autowired
-	OrderRepository repository;
+	private final OrderRepository repository;
 	private final ProductServiceClient  productServiceClient;
 	private final CircuitBreakerFactory circuitBreakerFactory;
 
@@ -30,17 +29,14 @@ public class OrderServiceImpl implements OrderService{
 		ModelMapper	modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-		OrderEntity	orderEntity = modelMapper.map(orderDetails, OrderEntity.class);
-		CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuit breaker");
-		String productName = circuitBreaker.run(() -> productServiceClient.getProduct(orderDetails.getProductId()).getProductName(),
+		OrderEntity		orderEntity = modelMapper.map(orderDetails, OrderEntity.class);
+		CircuitBreaker	circuitBreaker = circuitBreakerFactory.create("circuit breaker");
+		String			productName = circuitBreaker.run(() -> productServiceClient.getProduct(orderDetails.getProductId()).getProductName(),
 				throwable -> "product broken");
-//		ResponseProduct product = productServiceClient.getProduct(orderDetails.getProductId());
-//		orderDto.setProductName(product.getProductName());
 		orderEntity.setProductName(productName);
-
+		orderEntity.setStatus(STATUS.READY);
 		repository.save(orderEntity);
-
-		OrderDto	returnValue = modelMapper.map(orderEntity, OrderDto.class);
+		OrderDto		returnValue = modelMapper.map(orderEntity, OrderDto.class);
 		return (returnValue);
 	}
 
