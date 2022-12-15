@@ -1,8 +1,6 @@
 package com.example.productservice.kafka;
 
-import com.example.productservice.jpa.ProductEntity;
-import com.example.productservice.jpa.Status;
-import com.example.productservice.jpa.ProductRepository;
+import com.example.productservice.jpa.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,17 +17,19 @@ import java.util.Map;
 @Service
 @Slf4j
 public class KafkaConsumer {
-    ProductRepository repository;
+    ProductRepository productRepository;
+    UserRepository userRepository;
 
     @Autowired
-    public KafkaConsumer(ProductRepository repository) {
-        this.repository = repository;
+    public KafkaConsumer(ProductRepository productRepository, UserRepository userRepository) {
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
     }
 
-    @KafkaListener(topics = "order-product")
+    @KafkaListener(topics = "order-updated", groupId = "group1")
     @Transactional
-    public void processMessage(String kafkaMessage) {
-
+    public void updateOrder(String kafkaMessage) {
+        log.info("Order updated...!");
         Map<Object, Object> map = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -39,10 +39,28 @@ public class KafkaConsumer {
             e.printStackTrace();
         }
 
-        ProductEntity entity = repository.findByProductId((String) map.get("productId"));
-        entity.setStatus(Status.SoldOut);
+        ProductEntity entity = productRepository.findByProductId((String) map.get("productId"));
+        entity.setStatus(ProductEnum.Selling);
 
-        repository.save(entity);
+        productRepository.save(entity);
+    }
+
+    @KafkaListener(topics = "order-created-topic", groupId = "group1")
+    @Transactional
+    public void sellProduct(String kafkaMessage) {
+        log.info("SellProduct method is called...!");
+        Map<Object, Object> map = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
+            });
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        ProductEntity entity = productRepository.findByProductId((String) map.get("productId"));
+        entity.setStatus(ProductEnum.Sold);
+        productRepository.save(entity);
     }
 
     @KafkaListener(topics = "UserReported")
@@ -58,12 +76,17 @@ public class KafkaConsumer {
             e.printStackTrace();
         }
 
+
         Integer reportedCount = (Integer) map.get("reportedCount");
         if (reportedCount >= 5) {
-            List<ProductEntity> arr = repository.findByUserEmail((String) map.get("name"));
+            List<ProductEntity> arr = productRepository.findByUserEmail((String) map.get("name"));
             for (ProductEntity productEntity : arr) {
-                productEntity.setStatus(Status.Banned);
+                productEntity.setStatus(ProductEnum.Banned);
+                productRepository.save(productEntity);
             }
+            UserEntity userEntity = userRepository.findByEmail((String) map.get("email"));
+            userEntity.setBanned(true);
+            userRepository.save(userEntity);
         }
 
     }

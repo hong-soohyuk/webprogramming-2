@@ -1,6 +1,6 @@
 package com.example.productservice.vo;
 
-import com.example.productservice.jpa.Status;
+import com.example.productservice.jpa.ProductEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -11,8 +11,9 @@ import java.util.Date;
 public class ResponseProduct {
     private String productId;
     private String productName;
-    private Status status;
+    private Integer stock;
+    private ProductEnum productEnum;
     private String userEmail;
-    private Integer price;
+//    private Integer unitPrice;
     private Date createdAt;
 }

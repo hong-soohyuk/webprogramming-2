@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/ORDER-SERVICE/ORDER-SERVICE.iml" filepath="$PROJECT_DIR$/ORDER-SERVICE/ORDER-SERVICE.iml" />
       <module fileurl="file://$PROJECT_DIR$/USER-SERVICE/USER-SERVICE.iml" filepath="$PROJECT_DIR$/USER-SERVICE/USER-SERVICE.iml" />
       <module fileurl="file://$PROJECT_DIR$/product-service/catalog-service.iml" filepath="$PROJECT_DIR$/product-service/catalog-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shipment-service/shipment-service2.iml" filepath="$PROJECT_DIR$/shipment-service/shipment-service2.iml" />
     </modules>
   </component>
 </project>

@@ -22,13 +22,13 @@ public class ProductEntity implements Serializable {
     private String productName;
 
     @Column(nullable = false)
-    private Integer price;
+    private Integer unitPrice;
 
     @Column(nullable = false)
     private String userEmail;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private ProductEnum status;
 
     @Column(nullable = false, updatable = false, insertable = false)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")

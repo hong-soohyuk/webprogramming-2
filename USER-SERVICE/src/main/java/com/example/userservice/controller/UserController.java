@@ -32,11 +32,13 @@ public class UserController {
     public static final String db_url = "jdbc:oracle:thin:@localhost:1521:orcl";
     public static final String db_user = "c##USER_SERVICE_DB";
     public static final String db_password = "1234";
-
-    @Autowired
+    // service interface
     private UserService userService;
+    // asynchronous communication
     private KafkaProducer kafkaProducer;
+    // feign client
     private OrderServiceClient orderServiceClient;
+    // circuit breaker
     private CircuitBreakerFactory circuitBreakerFactory;
 
     @Autowired
@@ -64,23 +66,23 @@ public class UserController {
         for (UserEntity entity : userList) {
             ResponseUser responseUser = new ModelMapper().map(entity, ResponseUser.class);
             CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-            List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(entity.getEmail()), throwable -> new ArrayList<>());
+            List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrder(entity.getEmail()), throwable -> new ArrayList<>());
             responseUser.setOrders(orders);
             responseUsers.add(responseUser);
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseUsers);
     }
 
-    @GetMapping("/users/{email}/{pwd}")
-    public ResponseEntity<ResponseUser> getUser(@PathVariable("email") String email, @PathVariable("pwd") String pwd) {
-        UserEntity userEntity = userService.getUser(email, pwd);
-        if (userEntity == null || !userEntity.getPwd().equals(pwd))
+    @GetMapping("/users/{email}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("email") String email) {
+        UserEntity userEntity = userService.getUser(email);
+        if (userEntity == null)
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseUser());
         else {
             ResponseUser responseUser = new ModelMapper()
                     .map(userEntity, ResponseUser.class);
             CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-            List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(responseUser.getEmail()), throwable -> new ArrayList<>());
+            List<ResponseOrder> orders = circuitBreaker.run(() -> orderServiceClient.getOrder(responseUser.getEmail()), throwable -> new ArrayList<>());
             responseUser.setOrders(orders);
             return ResponseEntity.status(HttpStatus.OK).body(responseUser);
         }

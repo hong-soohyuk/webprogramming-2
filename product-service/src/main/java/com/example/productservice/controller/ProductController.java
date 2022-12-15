@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,17 +22,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
     private final Environment env;
-    private final ProductService catalogService;
+    private final ProductService productService;
     private final KafkaProducer kafkaProducer;
 
-    @GetMapping("/health_check")
-    public String status(HttpServletRequest request){
-        return String.format("It's Working in Catalog Service on Port %s", request.getServerPort());
-    }
-
     @GetMapping("/products")
-    public ResponseEntity<List<ResponseProduct>> getProducts(){
-        Iterable<ProductEntity> orderList = catalogService.getAllCatalogs();
+    public ResponseEntity<List<ResponseProduct>> getProducts() {
+        Iterable<ProductEntity> orderList = productService.getAllProducts();
 
         List<ResponseProduct> result = new ArrayList<>();
         orderList.forEach(v -> {
@@ -44,18 +38,19 @@ public class ProductController {
     }
 
     @PostMapping("/products/{userEmail}")
-    public void createProducts(@RequestBody PostProductRequest request , @PathVariable String userEmail){
-        catalogService.createProduct(request , userEmail);
+    public void createProducts(@RequestBody PostProductRequest request, @PathVariable String userEmail) {
+        productService.createProduct(request, userEmail);
     }
 
     @PatchMapping("/products")
     public void updateProduct(@RequestBody PatchProductRequest request) {
-        catalogService.updateProduct(request);
+        productService.updateProduct(request);
     }
 
     @GetMapping("/products/{productId}")
-    public ResponseEntity<ResponseProduct> getCatalog(@PathVariable String productId){
-        ProductEntity catalog = catalogService.getProduct(productId);
+    public ResponseEntity<ResponseProduct> getCatalog(@PathVariable String productId) {
+        ProductEntity catalog = productService.getProduct(productId);
+        System.out.println(catalog.getProductName());
         ResponseProduct response = new ModelMapper().map(catalog, ResponseProduct.class);
 
         GetProductDto getCatalogDto = new GetProductDto();
@@ -67,10 +62,8 @@ public class ProductController {
 
     @DeleteMapping("/products/{productId}")
     public void deleteProducts(@PathVariable String productId) {
-        catalogService.deleteProduct(productId);
+        productService.deleteProduct(productId);
     }
-
-
 
 
 }

@@ -6,4 +6,5 @@ import lombok.Data;
 public class ResponseProduct {
 	private String productId;
 	private String productName;
+
 }

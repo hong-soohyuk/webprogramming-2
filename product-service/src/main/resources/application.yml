@@ -2,9 +2,9 @@ server:
   port: 0
 
 spring:
-  sql:
-    init:
-      mode: never
+#  sql:
+#    init:
+#      mode: never
   application:
     name: product-service
   h2:

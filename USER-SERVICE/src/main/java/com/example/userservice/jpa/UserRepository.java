@@ -33,7 +33,7 @@ public class UserRepository {
             if (!executeQuery("SELECT * FROM user_table WHERE email=\'" + email + "\'").isAfterLast())
                 return false;
             ResultSet resultSet = executeQuery("INSERT INTO user_table " +
-                    "VALUES(\'" + email + "\',\'" + pwd + "\',\'" + address + "\', \'" + name + "\'," + reportedCount + ")");
+                    "VALUES(\'" + email + "\',\'" + pwd + "\',\'" + name + "\', \'" + address + "\'," + reportedCount + ")");
             return true;
         } catch (SQLException e) {
             throw new RuntimeException(e);
