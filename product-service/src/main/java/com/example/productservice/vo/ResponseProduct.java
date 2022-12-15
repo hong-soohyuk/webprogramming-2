@@ -12,7 +12,7 @@ public class ResponseProduct {
     private String productId;
     private String productName;
     private Integer stock;
-    private ProductEnum productEnum;
+    private String productStatus;
     private String userEmail;
 //    private Integer unitPrice;
     private Date createdAt;

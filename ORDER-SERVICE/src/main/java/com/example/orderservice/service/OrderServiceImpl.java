@@ -37,7 +37,8 @@ public class OrderServiceImpl implements OrderService{
 		CircuitBreaker	circuitBreaker = circuitBreakerFactory.create("circuit breaker");
 		ResponseProduct	responseProduct = circuitBreaker.run(() -> productServiceClient.getProduct(orderDetails.getProductId()),
 				throwable -> null);
-		if (responseProduct == null || responseProduct.getProductStatus() == "Banned" || responseProduct.getProductStatus() == "Sold")
+
+		if (responseProduct == null || responseProduct.getProductStatus().equals("Banned") || responseProduct.getProductStatus().equals("Sold"))
 			return (null);
 		orderEntity.setProductName(responseProduct.getProductName());
 		orderEntity.setStatus(STATUS.READY);
