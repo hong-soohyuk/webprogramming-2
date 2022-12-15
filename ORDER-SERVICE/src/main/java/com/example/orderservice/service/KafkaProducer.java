@@ -24,7 +24,7 @@ public class KafkaProducer {
         try     {jsonInString = mapper.writeValueAsString(orderDto);}
         catch   (JsonProcessingException e) {throw new RuntimeException(e);}
         kafkaTemplate.send(kafkaTopic, jsonInString);
-        log.info("Kafka Producer send data from the Order Microservice " + orderDto);
+        log.info("Kafka message from Order-service " + orderDto);
         return orderDto;
     }
 }

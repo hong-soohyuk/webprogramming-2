@@ -36,7 +36,7 @@ public class OrderController {
         orderDto.setUserEmail(userEmail);
         OrderDto        createDto = orderService.createOrder(orderDto);
         ResponseOrder   returnValue = modelMapper.map(createDto, ResponseOrder.class);
-        kafkaProducer.send("order-created-topic", orderDto);
+        kafkaProducer.send("order-created-topic", createDto);
         return (ResponseEntity.status(HttpStatus.CREATED).body(returnValue));
     }
 
@@ -55,10 +55,12 @@ public class OrderController {
     public ResponseEntity<ResponseOrder>    cancelOrder(@PathVariable("userEmail") String userEmail,
                                                         @PathVariable("orderId") String orderId) {
         OrderDto    orderDto = orderService.cancelOrder(orderId);
-        kafkaProducer.send("order-updated", orderDto);
         if (orderDto != null)
+        {
+            kafkaProducer.send("order-updated", orderDto);
             return (ResponseEntity.status(HttpStatus.OK).body(new ModelMapper().map(orderDto, ResponseOrder.class)));
+        }
         else
-            return (ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ModelMapper().map(null, ResponseOrder.class)));
+            return (ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ModelMapper().map(new OrderDto(), ResponseOrder.class)));
     }
 }
