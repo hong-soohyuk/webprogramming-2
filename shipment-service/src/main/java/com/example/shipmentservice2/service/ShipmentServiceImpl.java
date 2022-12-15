@@ -11,6 +11,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.UUID;
 
 @Service
@@ -55,6 +56,15 @@ public class ShipmentServiceImpl implements ShipmentService{
         shipmentRepository.save(shipmentEntity);
 
         ShipmentDto shipmentDto = new ModelMapper().map(shipmentEntity, ShipmentDto.class);
+        return shipmentDto;
+    }
+
+    @Override
+    @Transactional
+    public ShipmentDto deleteShipment(String userId, String shipmentId) {
+        ShipmentEntity shipmentEntity = shipmentRepository.findByShipmentId(shipmentId);
+        ShipmentDto shipmentDto = new ModelMapper().map(shipmentEntity, ShipmentDto.class);
+        shipmentRepository.delete(shipmentEntity);
         return shipmentDto;
     }
 }

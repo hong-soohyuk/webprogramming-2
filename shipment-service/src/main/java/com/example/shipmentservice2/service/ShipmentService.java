@@ -7,6 +7,6 @@ public interface ShipmentService {
     ShipmentDto createShipment(ShipmentDto shipmentDetails);
     ShipmentDto getShipmentByShipmentId(String shipmentId);
     Iterable<ShipmentEntity> getShipmentsByUserId(String userId);
-
     ShipmentDto updateShipmentStatus(String shipmentId, String status);
+    ShipmentDto deleteShipment(String userId, String shipmentId);
 }

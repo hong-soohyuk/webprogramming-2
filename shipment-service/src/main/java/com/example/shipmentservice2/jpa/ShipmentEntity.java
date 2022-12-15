@@ -32,7 +32,7 @@ public class ShipmentEntity implements Serializable {
     @Column(nullable = false)
     private String endAddress;
 
-    @Column(nullable = false)
+    @Column(nullable = false) @Enumerated(EnumType.STRING)
     private ShipmentStatus status;
 
     @Column(nullable = false, updatable = false, insertable = false)
