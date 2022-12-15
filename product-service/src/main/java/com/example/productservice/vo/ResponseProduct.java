@@ -14,6 +14,6 @@ public class ResponseProduct {
     private Integer stock;
     private String productStatus;
     private String userEmail;
-//    private Integer unitPrice;
+    private Integer price;
     private Date createdAt;
 }

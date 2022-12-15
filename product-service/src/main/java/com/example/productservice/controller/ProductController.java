@@ -27,10 +27,10 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<List<ResponseProduct>> getProducts() {
-        Iterable<ProductEntity> orderList = productService.getAllProducts();
+        Iterable<ProductEntity> productList = productService.getAllProducts();
 
         List<ResponseProduct> result = new ArrayList<>();
-        orderList.forEach(v -> {
+        productList.forEach(v -> {
             result.add(new ModelMapper().map(v, ResponseProduct.class));
         });
 
@@ -38,8 +38,8 @@ public class ProductController {
     }
 
     @PostMapping("/products/{userEmail}")
-    public void createProducts(@RequestBody PostProductRequest request, @PathVariable String userEmail) {
-        productService.createProduct(request, userEmail);
+    public String createProducts(@RequestBody PostProductRequest request, @PathVariable String userEmail) {
+        return productService.createProduct(request, userEmail);
     }
 
     @PatchMapping("/products")

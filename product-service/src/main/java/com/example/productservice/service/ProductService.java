@@ -6,7 +6,7 @@ import com.example.productservice.jpa.ProductEntity;
 
 public interface ProductService {
     public Iterable<ProductEntity> getAllProducts();
-    public void createProduct(PostProductRequest request, String userEmail);
+    public String createProduct(PostProductRequest request, String userEmail);
 
     void updateProduct(PatchProductRequest request);
 

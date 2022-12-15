@@ -40,7 +40,7 @@ public class KafkaConsumer {
         }
 
         ProductEntity entity = productRepository.findByProductId((String) map.get("productId"));
-        entity.setStatus(ProductEnum.Selling);
+        entity.setProductStatus(ProductEnum.Selling);
 
         productRepository.save(entity);
     }
@@ -59,7 +59,7 @@ public class KafkaConsumer {
         }
 
         ProductEntity entity = productRepository.findByProductId((String) map.get("productId"));
-        entity.setStatus(ProductEnum.Sold);
+        entity.setProductStatus(ProductEnum.Sold);
         productRepository.save(entity);
     }
 
@@ -81,7 +81,7 @@ public class KafkaConsumer {
         if (reportedCount >= 5) {
             List<ProductEntity> arr = productRepository.findByUserEmail((String) map.get("name"));
             for (ProductEntity productEntity : arr) {
-                productEntity.setStatus(ProductEnum.Banned);
+                productEntity.setProductStatus(ProductEnum.Banned);
                 productRepository.save(productEntity);
             }
             UserEntity userEntity = userRepository.findByEmail((String) map.get("email"));

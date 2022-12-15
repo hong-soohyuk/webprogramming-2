@@ -5,6 +5,7 @@ import com.example.productservice.dto.PostProductRequest;
 import com.example.productservice.jpa.ProductEntity;
 import com.example.productservice.jpa.ProductEnum;
 import com.example.productservice.jpa.ProductRepository;
+import com.example.productservice.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -13,42 +14,46 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-    private final ProductRepository catalogRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     private final Environment env;
 
     @Override
     public Iterable<ProductEntity> getAllProducts() {
-        return catalogRepository.findAll();
+        return productRepository.findAll();
     }
 
     @Override
-    public void createProduct(PostProductRequest request, String userEmail) {
+    public String createProduct(PostProductRequest request, String userEmail) {
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         ProductEntity orderEntity = modelMapper.map(request, ProductEntity.class);
-        orderEntity.setStatus(ProductEnum.Selling);
+        if (userRepository.findByEmail(userEmail).isBanned()) {
+            return "You are banned";
+        }
+        if (productRepository.findByProductId(orderEntity.getProductId()) != null) {
+            return "Already exists";
+        }
+        orderEntity.setProductStatus(ProductEnum.Selling);
         orderEntity.setUserEmail(userEmail);
-
-        catalogRepository.save(orderEntity);
+        productRepository.save(orderEntity);
+        return "Your product is registered";
     }
 
     @Override
     @Transactional
     public void updateProduct(PatchProductRequest request) {
 
-        ProductEntity productEntity = catalogRepository.findByProductId(request.getProductId());
+        ProductEntity productEntity = productRepository.findByProductId(request.getProductId());
         productEntity.setProductName(request.getProductName());
-        productEntity.setUnitPrice(request.getUnitPrice());
-
+        productEntity.setPrice(request.getPrice());
+        productRepository.save(productEntity);
     }
 
     @Override
@@ -56,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        ProductEntity productEntity = catalogRepository.findByProductId(productId);
+        ProductEntity productEntity = productRepository.findByProductId(productId);
         return productEntity;
     }
 
@@ -65,9 +70,9 @@ public class ProductServiceImpl implements ProductService {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        ProductEntity catalogEntity = catalogRepository.findByProductId(productId);
+        ProductEntity catalogEntity = productRepository.findByProductId(productId);
 
-        catalogRepository.delete(catalogEntity);
+        productRepository.delete(catalogEntity);
     }
 
 

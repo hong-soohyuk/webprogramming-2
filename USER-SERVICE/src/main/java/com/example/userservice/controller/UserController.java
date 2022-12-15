@@ -77,7 +77,7 @@ public class UserController {
     public ResponseEntity<ResponseUser> getUser(@PathVariable("email") String email) {
         UserEntity userEntity = userService.getUser(email);
         if (userEntity == null)
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseUser());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseUser());
         else {
             ResponseUser responseUser = new ModelMapper()
                     .map(userEntity, ResponseUser.class);
