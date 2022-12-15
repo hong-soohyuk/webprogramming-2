@@ -5,6 +5,7 @@ import com.example.orderservice.jpa.OrderEntity;
 import com.example.orderservice.jpa.OrderRepository;
 import com.example.orderservice.jpa.STATUS;
 import com.example.orderservice.vo.ResponseOrder;
+import com.example.orderservice.vo.ResponseProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -34,9 +35,11 @@ public class OrderServiceImpl implements OrderService{
 
 		OrderEntity		orderEntity = modelMapper.map(orderDetails, OrderEntity.class);
 		CircuitBreaker	circuitBreaker = circuitBreakerFactory.create("circuit breaker");
-		String			productName = circuitBreaker.run(() -> productServiceClient.getProduct(orderDetails.getProductId()).getProductName(),
-				throwable -> "product broken");
-		orderEntity.setProductName(productName);
+		ResponseProduct	responseProduct = circuitBreaker.run(() -> productServiceClient.getProduct(orderDetails.getProductId()),
+				throwable -> null);
+		if (responseProduct == null || responseProduct.getProductStatus() == "Banned" || responseProduct.getProductStatus() == "Sold")
+			return (null);
+		orderEntity.setProductName(responseProduct.getProductName());
 		orderEntity.setStatus(STATUS.READY);
 		repository.save(orderEntity);
 		OrderDto		returnValue = modelMapper.map(orderEntity, OrderDto.class);

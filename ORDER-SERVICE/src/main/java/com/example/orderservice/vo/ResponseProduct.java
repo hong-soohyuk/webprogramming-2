@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ResponseProduct {
-	private String productId;
-	private String productName;
+	private String	productId;
+	private String	productName;
+	private String	productStatus;
 }

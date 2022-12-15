@@ -35,6 +35,9 @@ public class OrderController {
         OrderDto        orderDto = modelMapper.map(orderDetails, OrderDto.class);
         orderDto.setUserEmail(userEmail);
         OrderDto        createDto = orderService.createOrder(orderDto);
+        if (createDto == null)
+            return (ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
+
         ResponseOrder   returnValue = modelMapper.map(createDto, ResponseOrder.class);
         kafkaProducer.send("order-created-topic", createDto);
         return (ResponseEntity.status(HttpStatus.CREATED).body(returnValue));
